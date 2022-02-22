@@ -1,4 +1,4 @@
-title Untitled
+title exercise 0.4: new note
 
 browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
 server-->browser: HTML-code
