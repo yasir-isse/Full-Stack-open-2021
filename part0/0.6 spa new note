@@ -1,0 +1,42 @@
+title exercise 0.6: spa new note
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+server-->browser: HTML-code
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+server-->browser: spa.js
+
+note over browser:
+browser starts executing js-code
+that requests JSON data from server 
+end note
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server-->browser: [{"content":"","date":"2022-02-22T12:37:42.853Z"}, ...]
+
+note over browser:
+browser executes the event handler
+that renders notes to display
+end note
+
+note over browser:
+user types in the form field
+and submits a new note
+end note 
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/exampleapp/new_note_spa
+
+note over browser:
+server adds new not to
+the data object
+end note
+
+server-->browser: HTTP 302 Redirect https://studies.cs.helsinki.fi/exampleapp/notes
+
+note over browser: 
+server responds with status code 302
+asking the browser to do a GET request to /exampleapp/spa
+end note
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
