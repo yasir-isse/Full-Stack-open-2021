@@ -2,14 +2,14 @@ import { useState } from "react";
 
 const Button = ({ handler, text }) => <button onClick={handler}>{text}</button>;
 
-const StatisticLine = (props) => (
+const StatisticLine = ({ text, value }) => (
   <p>
-    {props.text} {props.value}
+    {text} {value}
   </p>
 );
 
-const Statistics = (props) => {
-  if (props.all.length === 0) {
+const Statistics = ({ good, neutral, bad, all, average, positive }) => {
+  if (all.length === 0) {
     return (
       <div>
         <h2>Statistics</h2>
@@ -35,7 +35,7 @@ const Statistics = (props) => {
             <StatisticLine text={"Good"} />
           </td>
           <td>
-            <StatisticLine value={props.good} />
+            <StatisticLine value={good} />
           </td>
         </tr>
         <tr>
@@ -43,7 +43,7 @@ const Statistics = (props) => {
             <StatisticLine text={"Neutral"} />
           </td>
           <td>
-            <StatisticLine value={props.neutral} />
+            <StatisticLine value={neutral} />
           </td>
         </tr>
         <tr>
@@ -51,7 +51,7 @@ const Statistics = (props) => {
             <StatisticLine text={"Bad"} />
           </td>
           <td>
-            <StatisticLine value={props.bad} />
+            <StatisticLine value={bad} />
           </td>
         </tr>
         <tr>
@@ -59,7 +59,7 @@ const Statistics = (props) => {
             <StatisticLine text={"All"} />
           </td>
           <td>
-            <StatisticLine value={props.all.length} />
+            <StatisticLine value={all.length} />
           </td>
         </tr>
         <tr>
@@ -67,15 +67,15 @@ const Statistics = (props) => {
             <StatisticLine text={"Average"} />
           </td>
           <td>
-            <StatisticLine value={props.average} />
+            <StatisticLine value={average} />
           </td>
         </tr>
         <tr>
           <td>
-            <StatisticLine text={"Percentage"} />
+            <StatisticLine text={"Positive"} />
           </td>
           <td>
-            <StatisticLine value={props.percentage} />
+            <StatisticLine value={positive} />
           </td>
         </tr>
       </tbody>
@@ -89,8 +89,6 @@ const App = () => {
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
   const [all, setAll] = useState([]);
-
-  const [selected, setSelected] = useState(0);
 
   // save event handlers of each button to its own function
   const handleGood = () => {
@@ -107,7 +105,7 @@ const App = () => {
   };
 
   const average = (good - bad) / all.length;
-  const percentage = `${(good / all.length) * 100}%`;
+  const positive = `${(good / all.length) * 100}%`;
 
   return (
     <div>
@@ -122,7 +120,7 @@ const App = () => {
         neutral={neutral}
         bad={bad}
         average={average}
-        percentage={percentage}
+        positive={positive}
       />
     </div>
   );
