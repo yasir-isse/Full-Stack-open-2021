@@ -9,19 +9,19 @@ const DisplayVotes = ({ vote, selected }) => {
 };
 
 const DisplayMostVotes = ({ anecdotes, vote }) => {
-  let num = 0;
-  let anec = 0;
+  let largest = 0;
+  let index = 0;
   for (let i = 0; i < vote.length; i++) {
-    if (vote[i] > num) {
-      num = vote[i];
-      anec = i;
+    if (vote[i] > largest) {
+      largest = vote[i];
+      index = i;
     }
   }
   return (
     <div>
       <h3>Anecdote with most votes: </h3>
-      <p>{anecdotes[anec]}</p>
-      <p>has {num} votes!</p>
+      <p>{anecdotes[index]}</p>
+      <p>has {largest} votes!</p>
     </div>
   );
 };
