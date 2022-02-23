@@ -1,10 +1,12 @@
 import { useState } from "react";
 
+const DisplayAnecdote = ({ anecdotes, selected }) => (
+  <h2>{anecdotes[selected]}</h2>
+);
+
 const DisplayVotes = ({ vote, selected }) => {
   return <p>has {vote[selected]} votes</p>;
 };
-
-const Button = ({ handler, text }) => <button onClick={handler}>{text}</button>;
 
 const DisplayMostVotes = ({ anecdotes, vote }) => {
   let num = 0;
@@ -23,6 +25,9 @@ const DisplayMostVotes = ({ anecdotes, vote }) => {
     </div>
   );
 };
+
+const Button = ({ handler, text }) => <button onClick={handler}>{text}</button>;
+
 const App = () => {
   const anecdotes = [
     "If it hurts, do it more often",
@@ -46,12 +51,11 @@ const App = () => {
     const copy = [...vote];
     copy[selected] += 1;
     setVote(copy);
-    console.log(copy);
   };
 
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
+      <DisplayAnecdote anecdotes={anecdotes} selected={selected} />
       <DisplayVotes vote={vote} selected={selected} />
       <Button text={"Vote"} handler={handleVote} />
       <Button text={"Next Anecdote"} handler={handleChange} />
