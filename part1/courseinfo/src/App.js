@@ -42,6 +42,9 @@ const App = () => {
       <Course courseName={course.name} />
       <Content parts={course.parts} />
       <Total parts={course.parts} />
+      <div style={{ marginTop: "24rem" }}>
+        <small>Created by: Yasir Ahmed</small>
+      </div>
     </div>
   );
 };
