@@ -1,63 +1,43 @@
-import Course from "./components/Course";
-import Content from "./components/Content";
-import React from "react";
+import { React, useState, useEffect } from "react";
+import DisplayData from "./components/DisplayData";
 
 const App = () => {
-  const courses = [
-    {
-      name: "Half Stack application development",
-      id: 1,
-      parts: [
-        {
-          name: "Fundamentals of React",
-          exercises: 10,
-          id: 1,
-        },
-        {
-          name: "Using props to pass data",
-          exercises: 7,
-          id: 2,
-        },
-        {
-          name: "State of a component",
-          exercises: 14,
-          id: 3,
-        },
-        {
-          name: "Redux",
-          exercises: 11,
-          id: 4,
-        },
-      ],
-    },
-    {
-      name: "Node.js",
-      id: 2,
-      parts: [
-        {
-          name: "Routing",
-          exercises: 3,
-          id: 1,
-        },
-        {
-          name: "Middlewares",
-          exercises: 7,
-          id: 2,
-        },
-      ],
-    },
-  ];
+  const [countries, setCountries] = useState("");
+  const [countryData, setCountryData] = useState([]);
+  const [weather, setWeather] = useState([]);
+  const handleChange = (event) => setCountries(event.target.value);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch("https://restcountries.com/v3.1/all");
+      const data = await response.json();
+      setCountryData([...data]);
+    };
+
+    fetchData();
+  }, []);
 
   return (
-    <div>
-      {courses.map((course, index) => (
-        <React.Fragment key={index}>
-          <Course course={course} />
-          <Content course={course} />
-        </React.Fragment>
-      ))}
-      <div style={{ marginTop: "24rem" }}>
-        <small>Created by: Yasir Ahmed</small>
+    <div style={{ width: 600, marginLeft: "40px" }}>
+      <p>
+        Find Countries
+        <input
+          type="text"
+          value={countries}
+          onChange={handleChange}
+          style={{
+            marginLeft: "5px",
+          }}
+        />
+      </p>
+      <div>
+        <div>
+          {!countries ? (
+            <p style={{ fontSize: 13 }}>Enter words to filter</p>
+          ) : (
+            <DisplayData countryData={countryData} countries={countries} />
+          )}
+        </div>
       </div>
     </div>
   );
