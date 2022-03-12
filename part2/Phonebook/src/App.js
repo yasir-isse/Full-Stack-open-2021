@@ -3,6 +3,7 @@ import axios from "axios";
 import Filter from "./components/Filter";
 import Form from "./components/Form";
 import Persons from "./components/Persons";
+import contacts from "./services/contacts";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,7 +12,7 @@ const App = () => {
   const [filterNames, setFilterNames] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
+    contacts.getAllContacts().then((response) => {
       const persons = response.data;
       setPersons(persons);
     });
@@ -22,27 +23,68 @@ const App = () => {
     const value = event.target.value;
     setFilterNames(value);
   };
+  const handleDelete = (event) => {
+    const deletedContact = persons.find(
+      (person) => person.id === Number(event.target.id)
+    );
+    if (
+      window.confirm(
+        `Are you sure you want to delete "${deletedContact.name}" ?`
+      )
+    ) {
+      const newContacts = persons.filter(
+        (person) => person.id !== deletedContact.id
+      );
+      contacts.deleteContact(deletedContact.id);
+      setPersons(newContacts);
+    }
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
+
     if (newName === "") {
       alert(`${newName} Please add a name`);
       return setNewName("");
     }
-    let nameValues = [];
-    persons.reduce((names, person) => {
-      nameValues = [...nameValues, person.name];
-    }, []);
 
-    if (!nameValues.includes(newName)) {
+    if (persons.every((person) => person.name !== newName.trim())) {
       const newPerson = {
-        name: newName,
+        name: newName.trim(),
         number: newNum,
         id: persons.length + 1,
       };
-      setPersons([...persons, newPerson]);
-    } else {
+      contacts.createContact(newPerson).then((response) => {
+        window.confirm(`New user: ${response.data.name} added!`);
+        setPersons([...persons, newPerson]);
+      });
+    } else if (
+      persons.some((person) => person.name.trim() === newName.trim())
+    ) {
+      const contact = persons.find(
+        (person) => person.name.trim() === newName.trim()
+      );
+      if (contact.number !== newNum) {
+        if (
+          window.confirm(
+            `${contact.name} is already added to phonebock,replace the old number with a new one?`
+          )
+        ) {
+          const newPerson = { ...contact, number: newNum };
+          contacts
+            .updatContact(contact.id, newPerson)
+            .then((response) => console.log(response.data));
+          setPersons(
+            persons.map((person) =>
+              person.name === contact.name ? newPerson : person
+            )
+          );
+        }
+      }
+    } else if (persons.every((person) => person.name !== newName.trim())) {
       alert(`${newName} is already added to phonebook`);
     }
+
     setNewName("");
     setNewNum("");
   };
@@ -60,7 +102,11 @@ const App = () => {
         newNum={newNum}
       />
       <h2>Numbers</h2>
-      <Persons filterNames={filterNames} persons={persons} />
+      <Persons
+        filterNames={filterNames}
+        persons={persons}
+        deleteContact={handleDelete}
+      />
     </div>
   );
 };

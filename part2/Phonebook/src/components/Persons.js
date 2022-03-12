@@ -1,12 +1,15 @@
 import { React } from "react";
 
-function Persons({ filterNames, persons }) {
+function Persons({ filterNames, persons, deleteContact }) {
   return (
     <div>
       {filterNames === ""
         ? persons.map((person) => (
             <p key={person.id}>
               {person.name} {person.number}
+              <button id={person.id} onClick={(e) => deleteContact(e)}>
+                Delete
+              </button>
             </p>
           ))
         : persons
@@ -17,6 +20,9 @@ function Persons({ filterNames, persons }) {
             .map((fill) => (
               <p key={fill.id}>
                 {fill.name} {fill.number}
+                <button id={fill.id} onClick={(e) => deleteContact(e)}>
+                  Delete
+                </button>
               </p>
             ))}
     </div>
