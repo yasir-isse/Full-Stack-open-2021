@@ -1,15 +1,19 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Filter from "./components/Filter";
 import Form from "./components/Form";
 import Persons from "./components/Persons";
 import contacts from "./services/contacts";
+import Notification from "./components/Notification";
+import "./app.css";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNum, setNewNum] = useState("");
   const [filterNames, setFilterNames] = useState("");
+  const [message, setMessage] = useState("");
+  const [color, setColor] = useState("green");
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     contacts.getAllContacts().then((response) => {
@@ -17,6 +21,7 @@ const App = () => {
       setPersons(persons);
     });
   }, []);
+
   const handleName = (event) => setNewName(event.target.value);
   const handleNum = (event) => setNewNum(event.target.value);
   const handleFilter = (event) => {
@@ -36,14 +41,16 @@ const App = () => {
         (person) => person.id !== deletedContact.id
       );
       contacts.deleteContact(deletedContact.id);
+      setColor("red");
+      setMessage(`Deleted ${deletedContact.name} successfully!`);
+      setShow(true);
       setPersons(newContacts);
     }
   };
-
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (newName === "") {
+    if (!newName) {
       alert(`${newName} Please add a name`);
       return setNewName("");
     }
@@ -55,8 +62,10 @@ const App = () => {
         id: persons.length + 1,
       };
       contacts.createContact(newPerson).then((response) => {
-        window.confirm(`New user: ${response.data.name} added!`);
         setPersons([...persons, newPerson]);
+        setColor("green");
+        setShow(true);
+        setMessage(`Added ${newName} successfully!`);
       });
     } else if (
       persons.some((person) => person.name.trim() === newName.trim())
@@ -65,24 +74,39 @@ const App = () => {
         (person) => person.name.trim() === newName.trim()
       );
       if (contact.number !== newNum) {
-        if (
-          window.confirm(
-            `${contact.name} is already added to phonebock,replace the old number with a new one?`
-          )
-        ) {
+        window.confirm(
+          `${contact.name} is already added to phonebock, replace the old number with a new one?`
+        );
+        {
           const newPerson = { ...contact, number: newNum };
-          contacts
-            .updatContact(contact.id, newPerson)
-            .then((response) => console.log(response.data));
-          setPersons(
-            persons.map((person) =>
-              person.name === contact.name ? newPerson : person
-            )
-          );
+          if (contacts.updatContact(contact.id, newPerson)) {
+            setPersons(
+              persons.map((person) =>
+                person.name === contact.name ? newPerson : person
+              )
+            );
+            setColor("green");
+            setShow(true);
+            setNewName("");
+            setNewNum("");
+            return setMessage(
+              `Updated ${contact.name}'s number Successfully! `
+            );
+          } else {
+            setColor("red");
+            setShow(true);
+            setMessage(
+              `Information of ${contact.name} has already been removed from the server`
+            );
+            return setPersons(
+              persons.filter((person) => person.name !== contact.name)
+            );
+          }
         }
       }
-    } else if (persons.every((person) => person.name !== newName.trim())) {
-      alert(`${newName} is already added to phonebook`);
+    } else {
+      setColor("red");
+      setMessage(`${newName} is already added to phonebook`);
     }
 
     setNewName("");
@@ -90,11 +114,17 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div className="main">
       <h2>Phonebook</h2>
       <Filter handler={handleFilter} state={filterNames} />
-      <h3>Add a new</h3>
+      <h3>Add a new contact</h3>
+      <div className="msg">
+        {show && (
+          <Notification color={color} message={message} setShow={setShow} />
+        )}
+      </div>
       <Form
+        className="form"
         handleSubmit={handleSubmit}
         handleName={handleName}
         handleNum={handleNum}

@@ -1,0 +1,46 @@
+body {
+  background-color: teal;
+  font-family: sans-serif;
+}
+.main {
+  width: 550px;
+  margin: 0 auto;
+  margin-top: 100px;
+  padding: 20;
+  border-radius: 10px;
+  text-align: center;
+  background-color: lightseagreen;
+}
+
+h2 {
+  padding: 15px;
+}
+
+p {
+  text-transform: capitalize;
+  padding: 5px;
+  margin: 0 5px;
+}
+
+input {
+  padding: 2px;
+  margin: 5px;
+}
+
+button {
+  margin-left: 20px;
+  padding: 5px;
+  width: 60px;
+  text-align: center;
+  border-radius: 5px;
+  border: none;
+  text-transform: capitalize;
+  cursor: pointer;
+}
+
+.msg {
+  width: 300px;
+  margin: 0 auto;
+  text-align: center;
+  color: aliceblue;
+}
