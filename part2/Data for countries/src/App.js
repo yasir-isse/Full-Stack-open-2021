@@ -1,24 +1,29 @@
 import { React, useState, useEffect } from "react";
-import DisplayData from "./components/DisplayData";
-
+import DisplayCountries from "./components/DisplayCountries";
+import { getCountryData } from "./services/fetchCountryData";
+import { getWeatherData } from "./services/fetchWeatherData";
 const App = () => {
   const [countries, setCountries] = useState("");
   const [countryData, setCountryData] = useState([]);
-  const [weather, setWeather] = useState([]);
   const handleChange = (event) => setCountries(event.target.value);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch("https://restcountries.com/v3.1/all");
-      const data = await response.json();
-      setCountryData([...data]);
-    };
-
-    fetchData();
+    getCountryData().then((response) => {
+      const data = response.data;
+      setCountryData(data);
+    });
   }, []);
 
   return (
-    <div style={{ width: 600, marginLeft: "40px" }}>
+    <div
+      style={{
+        width: 600,
+        backgroundColor: "#f2aa4cff",
+        margin: "50px auto",
+        borderRadius: "10px",
+        padding: "10px",
+      }}
+    >
       <p>
         Find Countries
         <input
@@ -27,6 +32,9 @@ const App = () => {
           onChange={handleChange}
           style={{
             marginLeft: "5px",
+            border: "1px solid black",
+            padding: "2px",
+            borderRadius: "5px",
           }}
         />
       </p>
@@ -35,7 +43,7 @@ const App = () => {
           {!countries ? (
             <p style={{ fontSize: 13 }}>Enter words to filter</p>
           ) : (
-            <DisplayData countryData={countryData} countries={countries} />
+            <DisplayCountries countryData={countryData} countries={countries} />
           )}
         </div>
       </div>
