@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiKey = "2071696fb9fb4315bfc91354221303";
+const apiKey = process.env.REACT_APP_API_KEY;
 
 const baseUrl = `https://api.weatherapi.com/v1/current.json?key=${apiKey}`;
 
