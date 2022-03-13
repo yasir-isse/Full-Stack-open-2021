@@ -4,10 +4,8 @@ import Country from "./Country";
 import FilteredCountries from "./FilteredCountries";
 
 function DisplayCountries({ countryData, countries }) {
-  const [display, setDisplay] = useState(false);
   const [moreInfo, setMoreInfo] = useState("");
-  const [buttonText, setButtonText] = useState("Show details");
-  const [hideText, setHideText] = useState(false);
+  const [show, setShow] = useState(false);
   const [weather, setWeather] = useState({});
 
   const filtered = countryData.filter((obj) =>
@@ -15,9 +13,13 @@ function DisplayCountries({ countryData, countries }) {
   );
 
   const handleClick = (event) => {
-    setMoreInfo(event.target.name);
-    setDisplay(!display);
-    setHideText(!hideText);
+    if (event.target.innerHTML === "Show details") {
+      setMoreInfo(event.target.name);
+      setShow(true);
+    } else if (event.target.innerHTML === "Hide details") {
+      setMoreInfo(event.target.name);
+      setShow(false);
+    }
   };
   const showMoreInfo = (value) => {
     const data = filtered.filter((item) => item.name.common === value);
@@ -38,10 +40,9 @@ function DisplayCountries({ countryData, countries }) {
       <FilteredCountries
         filtered={filtered}
         showMoreInfo={showMoreInfo}
-        hideText={hideText}
+        show={show}
         handleClick={handleClick}
         moreInfo={moreInfo}
-        buttonText={buttonText}
         Country={Country}
         weather={weather}
         setWeather={setWeather}

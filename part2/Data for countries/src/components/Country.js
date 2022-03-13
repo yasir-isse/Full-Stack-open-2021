@@ -3,7 +3,14 @@ import DisplayWeather from "./DisplayWeather";
 
 function Country({ country, weather, setWeather }) {
   return (
-    <div>
+    <div
+      style={{
+        border: "1px solid grey",
+        padding: "10px",
+        backgroundColor: "#fafafa",
+        borderRadius: "5px",
+      }}
+    >
       <h1> {country.name.common}</h1>
       <p>Capital: {country.capital[0]}</p>
       <p>Area: {country.area}</p>

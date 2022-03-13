@@ -3,42 +3,31 @@ import React from "react";
 function FilteredCountries({
   filtered,
   showMoreInfo,
-  hideText,
+  show,
   handleClick,
   moreInfo,
-  buttonText,
   Country,
   weather,
   setWeather,
 }) {
   return filtered.map((name) => (
     <div key={name.name.common}>
-      <p key={name.name.common}>
+      <p>
         {name.name.common}
         <button
+          type="button"
           name={name.name.common}
           style={{ marginLeft: "5px" }}
           onClick={handleClick}
         >
-          {moreInfo === name.name.common && hideText
+          {moreInfo === name.name.common && show
             ? "Hide details"
-            : buttonText}
+            : "Show details"}
         </button>
       </p>
-      {moreInfo === name.name.common && hideText && (
+      {moreInfo === name.name.common && show && (
         <div>{showMoreInfo(moreInfo)}</div>
       )}
-      {filtered
-        .filter((item) => item.name.common === "")
-        .map((country) => {
-          return (
-            <Country
-              country={country[0]}
-              weather={weather}
-              setWeather={setWeather}
-            />
-          );
-        })}
     </div>
   ));
 }
