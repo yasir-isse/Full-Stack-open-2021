@@ -1,6 +1,6 @@
-import React from "react";
+import { React, useEffect } from "react";
 
-function Notification({ message, color, setShow }) {
+function Notification({ message, color, show, setShow }) {
   const style = {
     margin: "10px 0",
     color,
@@ -8,13 +8,15 @@ function Notification({ message, color, setShow }) {
     border: `1px solid ${color}`,
     padding: "4px",
   };
+  useEffect(() => {
+    setTimeout(() => {
+      setShow(!show);
+    }, 2000);
+  }, []);
 
   return (
     <div style={style}>
       <p>{message}</p>
-      {setTimeout(() => {
-        setShow(false);
-      }, 2000)}
     </div>
   );
 }

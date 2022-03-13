@@ -120,7 +120,12 @@ const App = () => {
       <h3>Add a new contact</h3>
       <div className="msg">
         {show && (
-          <Notification color={color} message={message} setShow={setShow} />
+          <Notification
+            color={color}
+            message={message}
+            show={show}
+            setShow={setShow}
+          />
         )}
       </div>
       <Form
