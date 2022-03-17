@@ -1,48 +1,27 @@
-const persons = require("./persons");
+require("dotenv").config();
 const express = require("express");
-const morgan = require("morgan");
 const cors = require("cors");
 const app = express();
+const Person = require("./models/person");
 
 app.use(express.json());
-
-morgan.token("body", function (req, res) {
-  return JSON.stringify(req.body);
-});
-
-app.use(
-  morgan(":method :url :status :res[content-length] - :response-time ms :body")
-);
-
 app.use(cors());
 app.use(express.static("build"));
 
-let people = persons.persons;
-
 app.get("/api/persons", (req, res) => {
-  res.send(people);
-});
-
-app.get("/info", (req, res) => {
-  const par = `<p>Phonebook has info for ${people.length} people</p>`;
-  const date = new Date();
-  res.send(`<div>${par} ${date}</div>`);
+  Person.find({}).then((people) => {
+    res.json(people);
+  });
 });
 
 app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const person = people.filter((person) => person.id === id);
-  if (person.length) {
-    res.send(person);
-  } else {
-    res.send({ error: "user id not found!" });
-  }
+  Person.find({ id: req.params.id }).then((person) => res.json(person));
 });
 
 app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const persons = people.filter((person) => person.id !== id);
-  res.status(204).end();
+  Person.deleteOne({ id: req.params.id }).then((result) => {
+    res.status(204).end();
+  });
 });
 
 app.post("/api/persons", (req, res) => {
@@ -53,19 +32,29 @@ app.post("/api/persons", (req, res) => {
   if (!body.number) {
     return res.status(400).json({ error: "number missing" });
   }
-  people.filter((person) => {
-    if (person.name.toLowerCase() === body.name.toLowerCase()) {
-      return res.status(400).json({ error: "name must be unique" });
-    }
-  });
+  // Person.find({ name: body.name, number: body.number }).then((result) => {
+  //   if (result.length > 0) {
+  //     return res.status(400).json({ error: "same user exists" });
+  //   } else {
   const id = Math.floor(Math.random() * 5000 + 1);
-  const person = {
+  const newPerson = {
     id,
     ...body,
     date: new Date(),
   };
-  const newPeople = people.concat(person);
-  res.send(newPeople);
+  Person.insertMany(newPerson);
+  res.send(newPerson);
+  // }
+  // });
+});
+
+app.get("/info", (req, res) => {
+  Person.find({}).then((result) => {
+    const numOfPeople = result.length;
+    const par = `<p>Phonebook has info for ${numOfPeople} people</p>`;
+    const date = new Date();
+    res.send(`<div>${par} ${date}</div>`);
+  });
 });
 
 const PORT = process.env.PORT || 3001;
