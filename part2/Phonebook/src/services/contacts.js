@@ -5,7 +5,7 @@ const getAllContacts = () => axios.get(baseUrl);
 
 const createContact = (contact) => axios.post(baseUrl, contact);
 
-const updatContact = (id, contact) =>
+const updateContact = (id, contact) =>
   axios
     .put(`${baseUrl}/${id}`, contact)
     .then((response) => response.data)
@@ -15,4 +15,4 @@ const updatContact = (id, contact) =>
 
 const deleteContact = (id) => axios.delete(`${baseUrl}/${id}`);
 
-export default { getAllContacts, createContact, updatContact, deleteContact };
+export default { getAllContacts, createContact, updateContact, deleteContact };

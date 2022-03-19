@@ -59,7 +59,6 @@ const App = () => {
       const newPerson = {
         name: newName.trim(),
         number: newNum,
-        id: persons.length + 1,
       };
       contacts.createContact(newPerson).then((response) => {
         setPersons([...persons, newPerson]);
@@ -77,31 +76,28 @@ const App = () => {
         window.confirm(
           `${contact.name} is already added to phonebock, replace the old number with a new one?`
         );
-        {
-          const newPerson = { ...contact, number: newNum };
-          if (contacts.updatContact(contact.id, newPerson)) {
-            setPersons(
-              persons.map((person) =>
-                person.name === contact.name ? newPerson : person
-              )
-            );
-            setColor("green");
-            setShow(true);
-            setNewName("");
-            setNewNum("");
-            return setMessage(
-              `Updated ${contact.name}'s number Successfully! `
-            );
-          } else {
-            setColor("red");
-            setShow(true);
-            setMessage(
-              `Information of ${contact.name} has already been removed from the server`
-            );
-            return setPersons(
-              persons.filter((person) => person.name !== contact.name)
-            );
-          }
+
+        const newPerson = { ...contact, number: newNum };
+        if (contacts.updateContact(contact.id, newPerson)) {
+          setPersons(
+            persons.map((person) =>
+              person.name === contact.name ? newPerson : person
+            )
+          );
+          setColor("green");
+          setShow(true);
+          setNewName("");
+          setNewNum("");
+          return setMessage(`Updated ${contact.name}'s number Successfully! `);
+        } else {
+          setColor("red");
+          setShow(true);
+          setMessage(
+            `Information of ${contact.name} has already been removed from the server`
+          );
+          return setPersons(
+            persons.filter((person) => person.name !== contact.name)
+          );
         }
       }
     } else {
