@@ -9,8 +9,8 @@ mongoose
 
 const phonebookSchema = mongoose.Schema({
   id: Number,
-  name: String,
-  number: String,
+  name: { type: String, minLength: 5, required: true },
+  number: { type: Number, min: 9, required: true },
   date: Date,
 });
 
