@@ -3,10 +3,11 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const Person = require("./models/person");
+const person = require("./models/person");
 
-app.use(express.json());
 app.use(cors());
 app.use(express.static("build"));
+app.use(express.json());
 
 app.get("/api/persons", (req, res) => {
   Person.find({}).then((people) => {
@@ -15,37 +16,64 @@ app.get("/api/persons", (req, res) => {
 });
 
 app.get("/api/persons/:id", (req, res) => {
-  Person.find({ id: req.params.id }).then((person) => res.json(person));
+  Person.find({ id: req.params.id })
+    .then((person) => {
+      if (person.length > 0) {
+        res.json(person);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((err) => {
+      res.status(500).end();
+    });
 });
 
 app.delete("/api/persons/:id", (req, res) => {
-  Person.deleteOne({ id: req.params.id }).then((result) => {
-    res.status(204).end();
-  });
+  Person.deleteOne({ id: req.params.id })
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((err) => console.log(err));
 });
 
 app.post("/api/persons", (req, res) => {
   const body = req.body;
   if (!body.name) {
     return res.status(400).json({ error: "name missing" });
-  }
-  if (!body.number) {
+  } else if (!body.number) {
     return res.status(400).json({ error: "number missing" });
+  } else {
+    Person.find({ name: req.body.name })
+      .then((person) => {
+        if (person.length > 0) {
+          res.status(400).json({ error: "name already exists" });
+        } else {
+          const id = new Date().getTime();
+          let newPerson = {
+            id,
+            ...req.body,
+            date: new Date(),
+          };
+          Person.insertMany(newPerson);
+          res.send(newPerson);
+        }
+      })
+      .catch((err) => {
+        res.status(500).end();
+      });
   }
-  // Person.find({ name: body.name, number: body.number }).then((result) => {
-  //   if (result.length > 0) {
-  //     return res.status(400).json({ error: "same user exists" });
-  //   } else {
-  const id = Math.floor(Math.random() * 5000 + 1);
-  const newPerson = {
-    id,
-    ...body,
-    date: new Date(),
-  };
-  Person.insertMany(newPerson);
-  res.send(newPerson);
-  // }
-  // });
+});
+
+app.put("/api/persons", (req, res) => {
+  Person.updateOne({ name: req.body.name }, { ...req.body }, { new: true })
+    .then((result) => {
+      res.send("User updated");
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).end();
+    });
 });
 
 app.get("/info", (req, res) => {
@@ -56,6 +84,26 @@ app.get("/info", (req, res) => {
     res.send(`<div>${par} ${date}</div>`);
   });
 });
+
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: "unknown endpoint" });
+};
+
+// handler of requests with unknown endpoint
+app.use(unknownEndpoint);
+
+const errorHandler = (error, req, res, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+// this has to be the last loaded middleware.
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 

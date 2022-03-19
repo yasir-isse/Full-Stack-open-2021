@@ -78,7 +78,7 @@ const App = () => {
         );
 
         const newPerson = { ...contact, number: newNum };
-        if (contacts.updateContact(contact.id, newPerson)) {
+        if (contacts.updateContact(newPerson)) {
           setPersons(
             persons.map((person) =>
               person.name === contact.name ? newPerson : person

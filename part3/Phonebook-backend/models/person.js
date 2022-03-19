@@ -10,13 +10,12 @@ mongoose
 const phonebookSchema = mongoose.Schema({
   id: Number,
   name: String,
-  number: Number,
+  number: String,
   date: Date,
 });
 
 phonebookSchema.set("toJSON", {
-  transfrom: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
+  transform: (document, returnedObject) => {
     delete returnedObject._id;
     delete returnedObject.__v;
   },

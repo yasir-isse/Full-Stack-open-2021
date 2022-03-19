@@ -5,12 +5,12 @@ const getAllContacts = () => axios.get(baseUrl);
 
 const createContact = (contact) => axios.post(baseUrl, contact);
 
-const updateContact = (id, contact) =>
+const updateContact = (contact) =>
   axios
-    .put(`${baseUrl}/${id}`, contact)
+    .put(`${baseUrl}/`, contact)
     .then((response) => response.data)
     .catch((err) => {
-      return new Error(err) === false;
+      return new Error(err);
     });
 
 const deleteContact = (id) => axios.delete(`${baseUrl}/${id}`);
